@@ -27,7 +27,40 @@ class Day1 extends Command
     public function handle()
     {
         // Part 1: Door password
+        $start = 50;
+        $dialPos = $start;
+        $zeroCount = 0;
+        $clickZero = 0;
+
         $f = fopen($this->argument('data'), 'r');
+
+        while (($l = fgets($f)) !== false) {
+            $direction = substr($l, 0, 1);
+            $rotAmt = (int) substr($l, 1);
+
+            switch($direction) {
+                case 'R':
+                    // Rotate the dial to the right
+                    $dialPos += $rotAmt;
+                    if ($dialPos > 100) {
+                        $dialPos %= 100;
+                    }
+                    break;
+                case 'L':
+                    $dialPos -= $rotAmt;
+                    if ($dialPos < 0) {
+                        $dialPos = ($dialPos %= 100) + 100;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if ($dialPos == 100) $dialPos = 0;
+            if ($dialPos == 0) $zeroCount++;
+        }
+        $this->info('Dial pointed at 0 ' . $zeroCount . ' times');
+        $this->info('Dial clicked past 0 ' . $clickZero + $zeroCount . ' times');
+        return 1;
     }
 
     /**
